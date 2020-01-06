@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="index.css">
+    </head>
+    <body>
+        <canvas id="canvas"></canvas>
+        <div id="info-panel">
+            <div style="margin: 0 auto; width: 100%; text-align: center;"><a style="color:cyan;" target="_blank" href="./instructions.html">click here for instructions</a></href></div>
+            <h3>CONTROLS</h3>
+            <div id="controls">
+                <input id="play-button" type="button" class="selected-button" value="[>"></input>
+                <input id="pause-button" type="button" class="unselected-button" value="||"></input>
+                <input id="terrain-select-button" type="button" class="selected-button" value="#"></input>
+                <input id="creature-select-button" type="button" class="unselected-button" value="@"></input>
+            </div>
+            <div id="terrain-info-box" class="info-box">
+                <h3>TERRAIN INFO</h3>
+                <div><span>difficulty: </span><span id="cell-difficulty" class="terrain-info"></span></div>
+                <div><span>advantage: </span><span id="cell-advantage" class="terrain-info"></span></div>
+                <div><span>light: </span><span id="cell-light" class="terrain-info"></span></div>
+                <div><span>creature: </span><span id="cell-creature" class="terrain-info"></span></div>
+                <div><span>cell x: </span><span id="cellx" class="terrain-info"></span></div>
+                <div><span>cell y: </span><span id="celly" class="terrain-info"></span></div>
+            </div>
+            <div id="creature-info-box" class="info-box hidden">
+                <h3>CREATURE INFO</h3>
+                <div><span>name: </span><span id="creature-name" class="creature-info"></span></div>
+                <div><span>alive: </span><span id="creature-alive" class="creature-info"></span></div>
+                <div><span>current action: </span><span id="creature-action" class="creature-info"></span></div>
+                <div><span>action progress: </span><span id="creature-action-progress" class="creature-info"></span></div>
+                <div><span>photosynth rate: </span><span id="creature-photosynth" class="creature-info"></span></div>
+                <div><span>energy: </span><span id="creature-energy" class="creature-info"></span></div>
+                <div><span>max energy: </span><span id="creature-max-energy" class="creature-info"></span></div>
+                <div><span>age: </span><span id="creature-age" class="creature-info"></span></div>
+                <div><span>max age: </span><span id="creature-max-age" class="creature-info"></span></div>
+                <div><span>move freq: </span><span id="creature-move-freq" class="creature-info"></span></div>
+                <div><span>move speed: </span><span id="creature-move-speed" class="creature-info"></span></div>
+                <div><span>bud freq: </span><span id="creature-bud-freq" class="creature-info"></span></div>
+                <div><span>min bud age: </span><span id="creature-min-bud-age" class="creature-info"></span></div>
+                <div><span>max bud age: </span><span id="creature-max-bud-age" class="creature-info"></span></div>
+                <div><span>bud speed: </span><span id="creature-bud-speed" class="creature-info"></span></div>
+            </div>
+        </div>
+
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"
+        ></script>
+        <script src="perlin.js"></script>
+        <script src="index.js"></script>
+    </body>
+</html>

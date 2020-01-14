@@ -93,7 +93,12 @@ class Input {
             if (GLOBAL.timing.gameSpeed >= 64) {
                 GLOBAL.gfx.alterInterface(
                     ["#speed-up-button"], //disable
-                    ["#slow-down-button"], //enable
+                    ["#slow-down-button"] //enable
+                );
+            } else {
+                GLOBAL.gfx.alterInterface(
+                    [], //disable
+                    ["#slow-down-button"] //enable
                 );
             }
         });
@@ -109,7 +114,12 @@ class Input {
             if (GLOBAL.timing.gameSpeed <= 1/64) {
                 GLOBAL.gfx.alterInterface(
                     ["#slow-down-button"], //disable
-                    ["#speed-up-button"], //enable
+                    ["#speed-up-button"] //enable
+                );
+            } else {
+                GLOBAL.gfx.alterInterface(
+                    [], //disable
+                    ["#speed-up-button"] //enable
                 );
             }
         });

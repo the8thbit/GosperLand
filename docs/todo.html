@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GosperLand Planned Features</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel='icon' href='./../resources/images/favicon.png' type='image/x-icon'>
+        <link rel="stylesheet" type="text/css" href="./../resources/css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="./../resources/css/docs.css">
+    </head>
+    <body>
+        <h1>GosperLand Planned Features</h1>
+        <input type="button" value="show completed" id="todo-show-completed-bttn"></input>
+        <ul>
+            <li>Gameplay<ul>
+                <li>gosper actions<ul>
+                    <li class="completed">reproduce by budding</li>
+                    <li>reproduce by laying eggs (action is faster than budding, but hatching is longer. Egg can be destroyed/eaten by other gospers)</li>
+                    <li>attack other gospers</li>
+                    <li>leech energy off of other gospers</li>
+                    <li>eat the corpses of other gospers</li>
+                    <li>give energy to other gospers</li>
+                </ul></li>
+                <li>gosper passive traits<ul>
+                    <li class="completed">photosynthesize based on tile light levels</li>
+                    <li>stomach with variable size for storing and processing food</li>
+                    <li>create corposes upon death that can be eaten and degrade over time</li>
+                    <li>spread diseases which mutate in their effects and the types of gospers they target</li>
+                </ul></li>
+                <li>gosper perception<ul>
+                    <li>Sight: detects with high quality in a far reaching cone shape and drops in quality in low light</li>
+                    <li>Hearing: detects in a far reaching circle, but only when gospers take actions</li>
+                    <li>Smell: detects with medium quality in a medium sized circle</li>
+                    <li>Touch: detects with high quality, but only in adjacent tiles</li>
+                    <li>Taste: gospers can taste corpses as they are eaten and decide whether to keep eating</li>
+                </ul></li>
+                <li>gosper decision making<ul>
+                    <li>make choices based on the tiles and gospers within perception range</li>
+                    <li>low quality perception randomizes values in percieved gospers and tiles</li>
+                    <li>allow decisions to be influenced by the "genome" (RGB values) of gospers</li>
+                    <li>randomize the way that percieved factors influence gospers and allow them to evolve startegies by mutating these randomized values slightly in offspring</li>
+                </ul></li>
+                <li>gosper stat system<ul>
+                    <li class="completed">point bank that gospers allocate from on spawn</li>
+                    <li class="completed">allow small chance of stat mutation in each offspring</li>
+                </ul></li>
+                <li>map<ul>
+                    <li class="completed">use layered noise maps to generate more complex terrain</li>
+                    <li>optional day/night cycles</li>
+                    <li>optional cloud cover</li>
+                    <li>circular maps in addition to rectangular maps</li>
+                    <li>several different themed terain generation algorithms to choose from</li>
+                    <li>different map sizes</li>
+                </ul></li>
+                <li>god powers<ul>
+                    <li>create and remove gospers</li>
+                    <li>change gosper stats</li>
+                    <li>change tile stats</li>
+                </ul></li>
+                <li>UI<ul>
+                    <li class="completed"><< and >> buttons for speeding up and slowing down game speed</li>
+                    <li>options button that pauses the game and pops up a modal window</li>
+                    <li>help button that pauses the game and sends you to the instructions (I have a link on the top left but I want to better integrate this into the UI without obfuscating it too much)</li>
+                    <li>pregame menus for choosing map type and game mode and usage stats. also allow settings and help to be accessed from here</li>
+                </ul></li>
+                <li>sound</li>
+                <li>user management</li>
+                <li>website<ul>
+                    <li class="completed">create a portal page with links to all the other pages</li>
+                    <li class="completed">create a changelog</li>
+                </ul></li>
+            </ul>
+            <li>Map Types</li>
+            <li>Game Modes<ul>
+                <li>Creative Mode<ul>
+                    <li>watch gospers explore and evolve</li>
+                    <li>intervene with god-like powers without limitations</li>
+                </ul></li>
+                <li>Mission Mode<ul>
+                    <li>complete missions on predesigned maps</li>
+                    <li>access to abilities varies depending on the mission</li>
+                </ul></li>
+                <li>Zombie Defense Mode<ul>
+                    <li>defend a colony of gospers from wave after wave of agressive zombie gospers</li>
+                    <li>intervene with god-like powers by spending mana that you gain over time</li>
+                    <li>colony gospers are always green and zombie gospers are always red</li>
+                    <li>the game ends when the entire colony is destroyed</li>
+                    <li>colony gospers do not reproduce</li>
+                </ul></li>
+                <li>Gosper Hunt Mode<ul>
+                    <li>spawn gospers and use other god powers to find and kill a hidden enemy gosper</li>
+                    <li>you only see what your gospers see</li>
+                    <li>the hidden gosper will always try to flee, has no action or passive energy costs, and no max age</li>
+                    <li>try to get the lowest time</li>
+                </ul></li>
+                <li>Battle Mode<ul>
+                    <li>compete with other users to control a percent of the world with gospers descendant from ones you placed</li>
+                    <li>intervene with god-like powers by spending mana that you gain over time</li>
+                    <li>players are assigned colors at the start of the game and player gospers are always the same color</li>
+                    <li>play locally, over a network, or over the Internet</li>
+                </ul></li>
+                <li>Realm Mode<ul>
+                    <li>compete to top the leaderboard in a neverending battle mode that keeps running on a server even after you close the game</li>
+                    <li>a handful of maps ("realms") are shared by all users</li>
+                    <li>choose a color for your gospers to appear as. gospers of a similar or same color will be treated as kin</li>
+                    <li>spend mana to change your color (thereby changing aliances)</li>
+                    <li>send messages to other players to try to get them to change their colors or otherwise act in your favor</li>
+                    <li>rate of mana increase is determined by the amount of mana being used by players (more active players = slower mana increase per player)</li>
+                </ul></li>
+                <li>Rogue Mode<ul>
+                    <li>take over a single gosper and see how long you can survive</li>
+                    <li>the game only progresses when you take an action</li>
+                    <li>your gosper has no max age</li>
+                    <li>import maps built in creative mode</li>
+                </ul></li>
+                <li>Arcade Mode<ul>
+                    <li>take over a single gosper and run around, unbound to the map</li>
+                    <li>the game progresses at a steady rate, whether you take actions or not</li>
+                    <li>your gosper has no max age</li>
+                    <li>import maps built in creative mode</li>
+                </ul></li>
+                <li>Fantastic Voyage Mode<ul>
+                    <li>take over a spaceship and shoot gospers to death to gain points</li>
+                    <li>the game progresses at a steady rate, whether you take actions or not</li>
+                    <li>some gospers will have ranged attacks and will evolve different shooting patterns</li>
+                    <li>import maps built in creative mode</li>
+                </ul></li>
+            </ul></li>
+            <li>Graphics</li>
+            <li>Optimizations<ul>
+                <li>predict how many frames before actions are projected to complete for a gosper, action/strategy choice opportunities become availible, or max age/0 energy are hit and only run calculations against gospers that are either in frame, recieve an interaction from another gosper, have their targeted tile blocked, or have hit their prediction thresholds</li>
+                <li>multithreading<ul>
+                    <li>split map into equal sized sections equal to the number of threads-1 with a two tile border between threads</li>
+                    <li>each section is assigned to a thread and the gospers within that section are processed by the corresponding thread</li>
+                    <li>gospers in the 2 tile border areas are processed by the master thread before or after (alternate each frame) every other thread finishes</li>
+                    <li>newly created gospers are generated in the master thread after all child threads are finished (to avoid a collsion in the gosper list array)</li>
+                    <li>since gospers can only affect adjacent tiles this strategy does not allow for race conditions</li>
+                    <li>special cases like projectile creation, movement, collision, and destruction in the fantastic voyage mode will be handled in the master thread</li>
+                    <li>maybe create an additional child thread to handle UI updates, audio, etc...</li>
+                    <li>might wait until after I port away from the prototype, but if not webworkers are an option</li>
+                </ul></li>
+                <li>port to faster platform<ul>
+                    <li>web js is being used for prototyping and may be slower and more limiting than other options</li>
+                    <li>eventually I want to port to a different platform to improve performance. options include:<ul>
+                        <li>port business logic to nodejs and use websockets or similar communication protocol to pass info back and forth. frontend exists just for input capturing, sound rendering, canvas manipulation, and DOM manipulation</li>
+                        <li>port entire program to nodejs and use electron for frontend rendering</li>
+                        <li>compile nodejs port to binaries with pkg or similar bin packager</li>
+                        <li>port entire game to Unity</li>
+                    </ul></li>
+                </ul></li>
+            </ul>
+            <li>Bugs/Tweaks<ul>
+                <li>fix camera zoom bug<ul>
+                    <li>camera should zoom to center of view/zoom out with previous view centered</li>
+                    <li>camera currently just goes to some strange position</li>
+                </ul></li>
+                <li>fix touch dragging<ul>
+                    <li>touch drag doesnt work for changing view position</li>
+                    <li>this makes mobile unusable</li>
+                    <li>behavior should match mouse dragging</li>
+                </ul></li>
+                <li class="completed">only try to render within the viewport<ul>
+                    <li>every gosper on the map is being sent to the renderer</li>
+                    <li>while the renderer performs its own culling, the extra processing required to send each gosper to the renderer eats into the framerate</li>
+                </ul></li>
+                <li class="completed">delete dead gospers<ul>
+                    <li>the gosperList array currently holds onto all gospers that have ever lived</li>
+                    <li>this eventually creates both memory issues, and framerate issues as the array is looped through each frame</li>
+                    <li>instead dead gospers should be nulled in the gosperList array, and their former positions in the array should be added to an array that gets popped from when new gospers are created (if this new array has length greater than 0)</li>
+                </ul></li>
+                <li class="completed">fix timing issues<ul>
+                    <li>some calculations seem to still be frame dependent evidenced by changes in survival rates when frame rates change</li>
+                    <li>when I started adding frame independent calculations gospers started dying off in large sudden chunks rather than gradually as they had done previously</li>
+                </ul></li>
+            </ul></li>
+        <ul>
+
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            let showCompleted = false;
+            $("#todo-show-completed-bttn").click(()=>{
+                if (!showCompleted) {
+                    showCompleted = true;
+                    $("#todo-show-completed-bttn").val("hide completed");
+                    $(".completed").show();
+                } else {
+                    showCompleted = false;
+                    $("#todo-show-completed-bttn").val("show completed");
+                    $(".completed").hide();
+                }
+            })
+        </script>
+</body>
+</html>

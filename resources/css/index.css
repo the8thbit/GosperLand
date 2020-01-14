@@ -1,0 +1,85 @@
+@font-face {
+    font-family: 'DeterminationSans';
+    src: url('./../fonts/DeterminationSans.woff') format('woff');
+}
+
+html {
+    background-color: darkslateblue;
+    background-image: url("./../images/background.jpg");
+    background-size: cover;
+    height: auto;
+}
+
+body {
+    max-width: 600px;
+    padding: 35px;
+    padding-bottom: 70px;
+    padding-top: 10px;
+    margin: 0 auto;
+    margin-bottom: 40px;
+    margin-top: 40px;
+    background-color: black;
+    color: cornsilk;
+    font-family: DeterminationSans, Helvetica, Arial, sans-serif;
+    font-size: 1.1rem;
+    background: black;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3.5rem;
+    margin-bottom: 0;
+}
+
+h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-top: 0;
+}
+
+div {
+    text-align: center;
+    margin: 0 auto;
+}
+
+#description {
+    max-width: 350px;
+    margin-bottom: 20px;
+}
+
+a {
+    text-align: center;
+    width: 400px;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 10px;
+    color: cornsilk;
+    border: 2px solid cornsilk;
+    border-right: 2px solid grey;
+    border-bottom: 2px solid grey;
+    background-color: darkslategrey;
+    border: 2px solid cornsilk;
+    border-right: 2px solid grey;
+    border-bottom: 2px solid grey;
+    background-color: darkslategrey;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+    
+a:active {
+    border: 2px solid rgb(194, 188, 164);
+    border-left: 2px solid rgb(100, 100, 100);
+    border-top: 2px solid rgb(100, 100, 100);
+    background-color: rgb(32, 53, 53);
+}
+
+a:hover {
+    filter: brightness(1.2);
+}
+
+strong {
+    font-weight: normal;
+    color: greenyellow;
+}

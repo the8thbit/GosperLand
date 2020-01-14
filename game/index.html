@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GosperLand</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel='icon' href='./../resources/images/favicon.png' type='image/x-icon'>
+        <link rel="stylesheet" type="text/css" href="./../resources/css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="./../resources/css/game.css">
+    </head>
+    <body>
+        <div id="game-screen" class="screen-state hidden">
+            <div id="control-panel" class="ui-box">
+                <h3>CONTROLS</h3>
+                <div id="controls">
+                    <input id="play-button" type="button" class="disabled-button" value="[>"></input>
+                    <input id="pause-button" type="button" class="enabled-button" value="||"></input>
+                    <input id="slow-down-button" type="button" class="enabled-button" value="<<"></input>
+                    <input id="speed-up-button" type="button" class="enabled-button" value=">>"></input>
+                    <input id="zoom-out-button" type="button" class="enabled-button" value="-"></input>
+                    <input id="zoom-in-button" type="button" class="disabled-button" value="+"></input>
+                    <input id="tile-select-button" type="button" class="disabled-button" value="#"></input>
+                    <input id="gosper-select-button" type="button" class="enabled-button" value="@"></input>
+
+                </div>
+            </div>
+            <canvas id="canvas"></canvas>
+            <div id="info-panel">
+                <div id="game-info-box" class="ui-box">
+                    <h3>GAME INFO</h3>
+                    <div><span>FPS: </span><span id="game-fps" class="game-info"></span></div>
+                    <div><span>living gospers: </span><span id="game-live-gospers" class="game-info"></span></div>
+                    <div><span>total gospers: </span><span id="game-total-gospers" class="game-info"></span></div>
+                    <div><span>longest lineage: </span><span id="game-longest-lineage" class="game-info"></span></div>
+                    <div><span>game speed: x</span><span id="game-speed" class="game-info"></span></div>
+                </div>
+                <div id="tile-info-box" class="ui-box info-box">
+                    <h3>TILE INFO</h3>
+                    <div><span>difficulty: </span><span id="tile-difficulty" class="tile-info"></span></div>
+                    <div><span>advantage: </span><span id="tile-advantage" class="tile-info"></span></div>
+                    <div><span>light: </span><span id="tile-light" class="tile-info"></span></div>
+                    <div><span>gosper: </span><span id="tile-gosper" class="tile-info"></span></div>
+                    <div><span>tile x: </span><span id="tilex" class="tile-info"></span></div>
+                    <div><span>tile y: </span><span id="tiley" class="tile-info"></span></div>
+                </div>
+                <div id="gosper-info-box" class="ui-box info-box hidden">
+                    <h3>GOSPER INFO</h3>
+                    <div><span>name: </span><span id="gosper-name" class="gosper-info"></span></div>
+                    <div><span>alive: </span><span id="gosper-alive" class="gosper-info"></span></div>
+                    <div><span>current action: </span><span id="gosper-action" class="gosper-info"></span></div>
+                    <div><span>action progress: </span><span id="gosper-action-progress" class="gosper-info"></span></div>
+                    <div><span>photosynth rate: </span><span id="gosper-photosynth" class="gosper-info"></span></div>
+                    <div><span>energy: </span><span id="gosper-energy" class="gosper-info"></span></div>
+                    <div><span>max energy: </span><span id="gosper-max-energy" class="gosper-info"></span></div>
+                    <div><span>age: </span><span id="gosper-age" class="gosper-info"></span></div>
+                    <div><span>max age: </span><span id="gosper-max-age" class="gosper-info"></span></div>
+                    <div><span>move freq: </span><span id="gosper-move-freq" class="gosper-info"></span></div>
+                    <div><span>move speed: </span><span id="gosper-move-speed" class="gosper-info"></span></div>
+                    <div><span>bud freq: </span><span id="gosper-bud-freq" class="gosper-info"></span></div>
+                    <div><span>min bud age: </span><span id="gosper-min-bud-age" class="gosper-info"></span></div>
+                    <div><span>max bud age: </span><span id="gosper-max-bud-age" class="gosper-info"></span></div>
+                    <div><span>bud speed: </span><span id="gosper-bud-speed" class="gosper-info"></span></div>
+                </div>
+            </div>
+        </div>
+        <div id="loading-screen" class="screen-state">
+            <h1>LOADING...</h1>
+        </div>
+        <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"
+        ></script>
+        <script src="./src/perlin.js"></script>
+        <script src="./src/utility.js"></script>
+        <script src="./src/map.js"></script>
+        <script src="./src/gfx.js"></script>
+        <script src="./src/input.js"></script>
+        <script src="./src/timing.js"></script>
+        <script src="./src/entities/tile.js"></script>
+        <script src="./src/entities/gosper.js"></script>
+        <script src="./src/main.js"></script>
+    </body>
+</html>

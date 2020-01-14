@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GosperLand Instructions</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel='icon' href='./../resources/images/favicon.png' type='image/x-icon'>
+        <link rel="stylesheet" type="text/css" href="./../resources/css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="./../resources/css/docs.css">
+    </head>
+    <body>
+        <h1>GosperLand Instructions</h1>
+        <div>GosperLand is an evolution simulation game. Let it run and watch as the "gospers" form colonies on the splotches of light spread out through the map.</div>
+        <div>This is a work in progress. Features are still being added, optimized, and tweaked. The plan is to add a variety of survival strategies and game-like elements. <a href="./todo.html">See the todo list for more.</a></div>
+
+        <h3>CONTROLS</h3>
+        <ul>
+            <li><strong>[> button:</strong> Resume simulation after pausing</li>
+            <li><strong>|| button:</strong> Pause simulation (this can make it easier to inspect gospers)</li>
+            <li><strong><< button:</strong> Slow down simulation</li>
+            <li><strong>>> button:</strong> Speed up simulation</li>
+            <li><strong>- button:</strong> Zoom out</li>
+            <li><strong>+ button:</strong> Zoom in</li>
+            <li><strong># button:</strong> Inspect tile. Upon clicking a tile, its border will turn yellow and information about the tile will appear in the info tray</li>
+            <li><strong>@ button:</strong> Inspect gosper. Upon clicking a gosper, the border of the tile it occupies will turn cyan and information about the gosper will appear in the info tray</li>
+            <li><strong>Mouse:</strong> Click and drag to move the map around, click on a tile or gosper to inspect it</li>
+            <li><strong>Other controls:</strong> Restart the simulation by reloading your browser (map saves are currently not supported)</li>
+        </ul>
+
+        <h3>GOSPERS</h3>
+        <ul>
+            <li>At the start of every game the world populates with a number of randomly generated gospers in random locations. These gospers will move around the map, asexually reproduce (bud), and photosynthesize to gain energy.</li>
+            <li>Gospers die if they run out of energy or if they reach their max age. Age increases by 1 every tick and can not be reduced. Energy decreases every tick, but decreases more if the gosper is moving and even more if they are budding.</li>
+            <li>Currently the only way to replenish energy is through photosynthesis, which occurs passively at a rate determined both by the gosper's "photosynth rate" stat and the light level of the tile they are occupying.</li>
+            <li>Gospers can currently do one of three things (chosen randomly, weighted by the "move freq" and "bud freq" values) on each tick: move, bud, or do nothing. Move tries to move the gosper to a randomly selected tile adjacent to the gosper, while bud attempts to reproduce into a randomly selected adjacent tile.</li>
+            <li>Once a gosper has chosen either the move or bud action it is locked into that action until it completes it, dies, or the targeted tile becomes unavailible. To complete the action the gosper must fill the "action progress" value up to the level of the "difficulty" of that targeted tile. The action progress value increases at a rate equal to the "move speed" or "bud speed" values, depending on the action chosen.</li>
+            <li>When a gosper successfully buds, it gives slightly less than half of its current energy to its offspring. The parent keeps slightly less than half its energy, and a very small and random amount of energy is lost. (in addition to the energy loss from the bud cost and tick cost)</li>
+            <li>A gosper's "bud freq" and "move freq" stats are chosen, and can increase or decrease slightly in offspring</li>
+            <li>A gosper's "photosynth rate", "max energy", "max age", "move speed", "min bud age", "max bud age", and "bud speed" are determined by points randomly assigned from a pool. All gospers have the same amount of points, they merely differ in terms of their allocations. When a gosper buds there is a 5% chance that its offspring will have up to 5% of its points reallocated. Otherwise its point allocation will match its parent.</li>
+            <li>Gospers start with a randomly assigned color. When a gosper reproduces, its offspring's color will sometimes mutate slightly. Color currently has no function other than to loosely indicate a shared lineage among gospers with similar colors. Note, it is possible for two gospers to spawn at the start of the simulation with a similar color, so color can't be relied on to show lineage in all cases.</li>
+            <li>Gospers normally have a white border around them. However, When a gosper is below its minimum reproductive age, it will have a green border that will fade to white as it gets closer to its reproductive range. If a gosper is above its max reproductive age its border will fade to blue until it reaches its max age. If a gosper is below 20% of its max energy its border will fade to black until it reaches 0 energy.</li>
+            <li>Gospers will have a white dot in their center when they are attempting to move and a black dot when they are attempting to bud.</li>
+        </ul>
+
+        <h3>THE MAP</h3>
+        <ul>
+            <li>The map is composed of 100x100 colored tiles with hue, saturation, and lightness corresponding to three randomly generated 2d simplex (perlin) noise maps.</li>
+            <li>The hue of a tile indicates the difficulty of traversing the tile. A more red tile indicates it is difficult to traverse, while a more blue tile indicates it is easy to traverse. The higher the difficulty, the more time and energy it takes for a gosper to move or bud into a target tile</li>
+            <li>The saturation of a tile indicates the "advantage" of the tile. This doesn't have a function yet, but my goal is to use it as an attack/defense bonus once combat is implemented.</li>
+            <li>The brightness of a tile indicates the light level of that tile. This is very important as at the moment the only way for gospers to gain energy is via photosynthesis.</li>
+        </ul>
+    </body>
+</html>

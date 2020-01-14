@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GosperLand Changelog</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel='icon' href='./../resources/images/favicon.png' type='image/x-icon'>
+        <link rel="stylesheet" type="text/css" href="./../resources/css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="./../resources/css/docs.css">
+    </head>
+    <body>
+        <h1>GosperLand Changelog</h1>
+        <h3>v0.2.0</h3>
+        <ul>
+            <li>major rebalancing</li>
+            <li>write more complex terrain generator, using layered simplex noise maps instead of a single map</li>
+            <li>certain stands draw from a point bank rather than being allocated and mutated at complete random</li>
+            <li>frame independent timing</li>
+            <li>speed up and slow down buttons added to the UI</li>
+            <li>zoom in and zoom out buttons added to the UI</li>
+            <li>custom font 'DeterminationSans' added</li>
+            <li>add game info pane</li>
+            <li>major UI overhaul</li>
+            <li>loading screen added</li>
+            <li>instructions tweaked</li>
+            <li>planned features list added</li>
+            <li>changelog added</li>
+            <li>sorta add support for mobile (still kinda wonky, and really only works in landscape)</li>
+            <li>website portal page added</li>
+            <li>change all references to "creature" to "gosper"</li>
+            <li>gosperland.com domain name purchased</li>
+            <li>stop holding onto dead gospers, fixing a memory leak issue and improving framerate</li>
+            <li>remove render attempts against gospers and tiles outside of viewport, drastically improving frame rate</li>
+            <li>huge code refactor</li>
+        </ul>
+        <h3>v0.1.0</h3>
+        <ul>
+            <li>start hosting on github pages</li>
+            <li>start tracking in git</li>
+            <li>instructions added</li>
+            <li>turn gosper borders green when below breeding age, blue when above breeding age, and black when below 20% of max energy levels</li>
+            <li>add indicators that show when a gosper is trying to move or bud</li>
+            <li>add gosper aging</li>
+            <li>give gosper offspring half of parent's genergy rather than creating energy from nothing</li>
+            <li>add photosynthesis to gospers</li>
+            <li>replace pure random map generation with simplex noise generation</li>
+            <li>remove tile types and replace with tiles with unique stats that map to hue, saturation, and lightness</li>
+            <li>add UI buttons to inpect gospers and tiles</li>
+            <li>add UI buttons to play and pause the simulation</li>
+        </ul>
+        <h3>v0.0.0</h3>
+        <ul>
+            <li>create two tile types, forest and ocean, and randomly sprinkle them across the map, the former of which is traversable by gospers</li>
+            <li>give gospers energy levels and deplete them over time, killing them if they reach 0</li>
+            <li>allow gosper offspring to mutate thier color slightly</li>
+            <li>create gospers that move around and reproduce by budding</li>
+            <li>create initial prototype</li>
+        </ul>
+</body>
+</html>

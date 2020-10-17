@@ -28,25 +28,24 @@
 
         <h3>GOSPERS</h3>
         <ul>
-            <li>At the start of every game the world populates with a number of randomly generated gospers in random locations. These gospers will move around the map, asexually reproduce (bud), and photosynthesize to gain energy.</li>
+            <li>At the start of every game the world populates by spawning gospers in random locations at random times. As the total gosper population grows, these spawns become rarer. These gospers will move around the map, asexually reproduce (bud), photosynthesize to gain energy, attack other gospers, and eat the corposes of dead gospers.</li>
+            <li>Gospers decide how to act based on the output of a randomly generated neural network. The gosper's own stats, the stats of nearby gospers, and the stats of the occupied and nearby tiles are all input values for the neural network.</li>
             <li>Gospers die if they run out of energy or if they reach their max age. Age increases by 1 every tick and can not be reduced. Energy decreases every tick, but decreases more if the gosper is moving and even more if they are budding.</li>
-            <li>Currently the only way to replenish energy is through photosynthesis, which occurs passively at a rate determined both by the gosper's "photosynth rate" stat and the light level of the tile they are occupying.</li>
-            <li>Gospers can currently do one of three things (chosen randomly, weighted by the "move freq" and "bud freq" values) on each tick: move, bud, or do nothing. Move tries to move the gosper to a randomly selected tile adjacent to the gosper, while bud attempts to reproduce into a randomly selected adjacent tile.</li>
-            <li>Once a gosper has chosen either the move or bud action it is locked into that action until it completes it, dies, or the targeted tile becomes unavailible. To complete the action the gosper must fill the "action progress" value up to the level of the "difficulty" of that targeted tile. The action progress value increases at a rate equal to the "move speed" or "bud speed" values, depending on the action chosen.</li>
+            <li>Photosynthesis occurs passively at a rate determined both by the gosper's "photosynth rate" stat and the light level of the tile they are occupying.</li>
+            <li>Once a gosper has chosen an action it is locked into that action until it completes it, dies, or the targeted tile becomes unavailible. To complete the action the gosper must fill the "action progress" value up to the level of the "difficulty" of that targeted tile. The action progress value increases at a rate equal to the "move speed" or "bud speed" values, depending on the action chosen.</li>
             <li>When a gosper successfully buds, it gives slightly less than half of its current energy to its offspring. The parent keeps slightly less than half its energy, and a very small and random amount of energy is lost. (in addition to the energy loss from the bud cost and tick cost)</li>
-            <li>A gosper's "bud freq" and "move freq" stats are chosen, and can increase or decrease slightly in offspring</li>
             <li>A gosper's "photosynth rate", "max energy", "max age", "move speed", "min bud age", "max bud age", and "bud speed" are determined by points randomly assigned from a pool. All gospers have the same amount of points, they merely differ in terms of their allocations. When a gosper buds there is a 5% chance that its offspring will have up to 5% of its points reallocated. Otherwise its point allocation will match its parent.</li>
-            <li>Gospers start with a randomly assigned color. When a gosper reproduces, its offspring's color will sometimes mutate slightly. Color currently has no function other than to loosely indicate a shared lineage among gospers with similar colors. Note, it is possible for two gospers to spawn at the start of the simulation with a similar color, so color can't be relied on to show lineage in all cases.</li>
+            <li>Gospers start with a randomly assigned color. When a gosper reproduces, its offspring's color will sometimes mutate slightly. While color has no inherent function, it can influence how gospers interact with other gospers. Note, it is possible for two gospers to spawn at the start of the simulation with a similar color, so color can't be relied on to show lineage in all cases.</li>
             <li>Gospers normally have a white border around them. However, When a gosper is below its minimum reproductive age, it will have a green border that will fade to white as it gets closer to its reproductive range. If a gosper is above its max reproductive age its border will fade to blue until it reaches its max age. If a gosper is below 20% of its max energy its border will fade to black until it reaches 0 energy.</li>
-            <li>Gospers will have a white dot in their center when they are attempting to move and a black dot when they are attempting to bud.</li>
+            <li>Gospers will have a white dot in their center when they are attempting to move, a black dot when they are attempting to bud, a red dot when they are attempting to attack another gosper, and a green dot when they are attempting to eat a gosper corpse.</li>
         </ul>
 
         <h3>THE MAP</h3>
         <ul>
             <li>The map is composed of 160x100 colored tiles with hue, saturation, and lightness corresponding to three randomly generated 2d simplex (perlin) noise maps.</li>
             <li>The hue of a tile indicates the difficulty of traversing the tile. Green tiles have a very low difficulty, blue tiles are higher, purple tiles are higher still, and red tiles are the most difficult. The higher the difficulty, the more time and energy it takes for a gosper to move or bud into a target tile</li>
-            <li>The saturation of a tile indicates the "advantage" of the tile. This doesn't have a function yet, but my goal is to use it as an attack/defense bonus once combat is implemented.</li>
-            <li>The brightness of a tile indicates the light level of that tile. This is very important as at the moment the only way for gospers to gain energy is via photosynthesis.</li>
+            <li>The saturation of a tile indicates the "advantage" of the tile. This gives an attack/defense bonus to attacks on/from gospers.</li>
+            <li>The brightness of a tile indicates the light level of that tile, which influences photosynthetic energy generation.</li>
         </ul>
     </body>
 </html>

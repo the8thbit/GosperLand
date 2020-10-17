@@ -8,6 +8,58 @@
         <link rel="stylesheet" type="text/css" href="./../resources/css/game.css">
     </head>
     <body>
+        <div id="gosper-info-screen" class="screen-state hidden">
+            <h3>GOSPER INFO</h3>
+            <div id="gosper-info-view-menu">
+                <div id="gosper-info-view-menu-main" class="gosper-info-menu-button gosper-info-menu-button-selected">STATS</div>
+                <div id="gosper-info-view-menu-pathogen" class="gosper-info-menu-button">PATHOGENS</div>
+                <div id="gosper-info-view-menu-brain" class="gosper-info-menu-button">BRAIN INFO</div>
+                <div id="gosper-info-view-menu-back" class="gosper-info-menu-button">BACK</div>
+            </div>
+            <div id="gosper-main-view" class="gosper-info-view">
+                <div>
+                    <div><span>name: </span><span class="gosper-name gosper-info"></span></div>
+                    <div><span>status: </span><span class="gosper-alive gosper-info"></span></div>
+                    <div><span>hex color: </span><span class="gosper-hex-color gosper-info"></span></div>
+                    <div><span>current action: </span><span class="gosper-action gosper-info"></span></div>
+                    <div><span>action progress: </span><span class="gosper-action-progress gosper-info"></span></div>
+                    <div><span>lineage length: </span><span class="gosper-lineage-length gosper-info"></span></div>
+                    <div><span>parent: </span><span class="gosper-parent gosper-info"></span></div>
+                    <div><span>grandparent: </span><span class="gosper-grandparent gosper-info"></span></div>
+                    <div><span>children: </span><span class="gosper-children gosper-info"></span></div>
+                    <div><span>stomach size: </span><span class="gosper-stomach-size gosper-info"></span></div>
+                    <div><span>photosynth rate: </span><span class="gosper-photosynth gosper-info"></span></div>
+                    <div><span>max energy: </span><span class="gosper-max-energy gosper-info"></span></div>
+                    <div><span>food in stomach: </span><span class="gosper-food-in-stomach gosper-info"></span></div>
+                    <div><span>energy: </span><span class="gosper-energy gosper-info"></span></div>
+                    <div><span>age: </span><span class="gosper-age gosper-info"></span></div>
+                    <div><span>max age: </span><span class="gosper-max-age gosper-info"></span></div>
+                    <div><span>min bud age: </span><span class="gosper-min-bud-age gosper-info"></span></div>
+                    <div><span>max bud age: </span><span class="gosper-max-bud-age gosper-info"></span></div>
+                    <div><span>move speed: </span><span class="gosper-move-speed gosper-info"></span></div>
+                    <div><span>bud speed: </span><span class="gosper-bud-speed gosper-info"></span></div>
+                    <div><span>eat speed: </span><span class="gosper-eat-speed gosper-info"></span></div>
+                    <div><span>brain complexity: </span><span class="gosper-brain-complexity gosper-info"></span></div>
+                    <div><span>brain layer count: </span><span class="gosper-brain-layer-count gosper-info"></span></div>
+                    <div><span>neuron count: </span><span class="gosper-brain-node-count gosper-info"></span></div>
+                    <div><span>red level: </span><span class="gosper-red-level gosper-info"></span></div>
+                    <div><span>green level: </span><span class="gosper-green-level gosper-info"></span></div>
+                    <div><span>blue level: </span><span class="gosper-blue-level gosper-info"></span></div>
+                </div>
+            </div>
+            <div id="gosper-lineage-view" class="gosper-info-view hidden">
+                <div><span>lineage length: </span><span class="gosper-lineage-length gosper-info"></span></div>
+                <div><span>parent: </span><span class="gosper-parent gosper-info"></span></div>
+                <div><span>grandparent: </span><span class="gosper-grandparent gosper-info"></span></div>
+                <div><span>children: </span><span class="gosper-children gosper-info"></span></div>
+            </div>
+            <div id="gosper-pathogen-view" class="gosper-info-view hidden">
+                <div><span class="gosper-pathogen gosper-info">no pathogens</span></div>
+            </div>
+            <div id="gosper-brain-view" class="gosper-info-view hidden">
+                <div class="gosper-brain gosper-info"></div>
+            </div>
+        </div>
         <div id="game-screen" class="screen-state hidden">
             <div id="control-panel" class="ui-box">
                 <h3>CONTROLS</h3>
@@ -23,6 +75,7 @@
 
                 </div>
             </div>
+            <div id="sun-filter"></div>
             <canvas id="canvas"></canvas>
             <div id="info-panel">
                 <div id="game-info-box" class="ui-box">
@@ -44,21 +97,20 @@
                 </div>
                 <div id="gosper-info-box" class="ui-box info-box hidden">
                     <h3>GOSPER INFO</h3>
-                    <div><span>name: </span><span id="gosper-name" class="gosper-info"></span></div>
-                    <div><span>alive: </span><span id="gosper-alive" class="gosper-info"></span></div>
-                    <div><span>current action: </span><span id="gosper-action" class="gosper-info"></span></div>
-                    <div><span>action progress: </span><span id="gosper-action-progress" class="gosper-info"></span></div>
-                    <div><span>photosynth rate: </span><span id="gosper-photosynth" class="gosper-info"></span></div>
-                    <div><span>energy: </span><span id="gosper-energy" class="gosper-info"></span></div>
-                    <div><span>max energy: </span><span id="gosper-max-energy" class="gosper-info"></span></div>
-                    <div><span>age: </span><span id="gosper-age" class="gosper-info"></span></div>
-                    <div><span>max age: </span><span id="gosper-max-age" class="gosper-info"></span></div>
-                    <div><span>move freq: </span><span id="gosper-move-freq" class="gosper-info"></span></div>
-                    <div><span>move speed: </span><span id="gosper-move-speed" class="gosper-info"></span></div>
-                    <div><span>bud freq: </span><span id="gosper-bud-freq" class="gosper-info"></span></div>
-                    <div><span>min bud age: </span><span id="gosper-min-bud-age" class="gosper-info"></span></div>
-                    <div><span>max bud age: </span><span id="gosper-max-bud-age" class="gosper-info"></span></div>
-                    <div><span>bud speed: </span><span id="gosper-bud-speed" class="gosper-info"></span></div>
+                    <div><span>name: </span><span class="gosper-name gosper-info"></span></div>
+                    <div><span>status: </span><span class="gosper-alive gosper-info"></span></div>
+                    <div><span>current action: </span><span class="gosper-action gosper-info"></span></div>
+                    <div><span>action progress: </span><span class="gosper-action-progress gosper-info"></span></div>
+                    <div></br></div>
+                    <div><span>photosynth rate: </span><span class="gosper-photosynth gosper-info"></span></div>
+                    <div><span>stomach size: </span><span class="gosper-stomach-size gosper-info"></span></div>
+                    <div><span>max energy: </span><span class="gosper-max-energy gosper-info"></span></div>
+                    <div><span>max age: </span><span class="gosper-max-age gosper-info"></span></div>
+                    <div></br></div>
+                    <div><span>food in stomach: </span><span class="gosper-food-in-stomach gosper-info"></span></div>
+                    <div><span>energy: </span><span class="gosper-energy gosper-info"></span></div>
+                    <div><span>age: </span><span class="gosper-age gosper-info"></span></div>
+                    <div><div id="gosper-more-info-button" class="hidden">more info...</div></div>
                 </div>
             </div>
         </div>
@@ -71,12 +123,14 @@
             crossorigin="anonymous"
         ></script>
         <script src="./src/perlin.js"></script>
+        <script src="./src/constants.js"></script>
         <script src="./src/utility.js"></script>
         <script src="./src/map.js"></script>
         <script src="./src/gfx.js"></script>
         <script src="./src/input.js"></script>
         <script src="./src/timing.js"></script>
         <script src="./src/entities/tile.js"></script>
+        <script src="./src/entities/gosperBrain.js"></script>
         <script src="./src/entities/gosper.js"></script>
         <script src="./src/main.js"></script>
     </body>

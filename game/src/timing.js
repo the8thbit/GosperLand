@@ -9,19 +9,12 @@ class Timing {
         this.endFrameTime = new Date();
         this.timeDelta = 0;
         this.gameSpeed = 1;
-        this.maxAdjust = 2;
+        this.maxAdjust = 0.2;
         this.totalTickCount = 0;
         this.timeElapsed = 0;
         this.fps = 0;
         this.paused = false;
         setTimeout(this.calculateFps.bind(this), 1);
-    }
-    updateGospers() {
-        for (let i=0; i < GLOBAL.map.gosperList.length; i++) {
-            if (GLOBAL.map.gosperList[i] !== null) {
-                GLOBAL.map.gosperList[i].tick();
-            }
-        }
     }
     runTick() {
         this.startFrameTime = new Date();
@@ -34,25 +27,41 @@ class Timing {
             GLOBAL.input.x_momentum = 0;
             GLOBAL.input.y_momentum = 0;
         } else {
-            GLOBAL.input.x_momentum -= GLOBAL.input.x_momentum_degrade * this.timeDelta;
-            GLOBAL.input.y_momentum -= GLOBAL.input.y_momentum_degrade * this.timeDelta;
-            GLOBAL.input.x_momentum = Math.max(GLOBAL.input.x_momentum, 0);
-            GLOBAL.input.y_momentum = Math.max(GLOBAL.input.y_momentum, 0);
+            if (GLOBAL.input.x_momentum > 0) {
+                GLOBAL.input.x_momentum -= GLOBAL.input.x_momentum_degrade * this.timeDelta;
+                GLOBAL.input.x_momentum = Math.max(GLOBAL.input.x_momentum, 0);
+            } else if (GLOBAL.input.x_momentum < 0) {
+                GLOBAL.input.x_momentum += GLOBAL.input.x_momentum_degrade * this.timeDelta;
+                GLOBAL.input.x_momentum = Math.min(GLOBAL.input.x_momentum, 0);
+            }
+
+            if (GLOBAL.input.y_momentum > 0) {
+                GLOBAL.input.y_momentum -= GLOBAL.input.y_momentum_degrade * this.timeDelta;
+                GLOBAL.input.y_momentum = Math.max(GLOBAL.input.y_momentum, 0);
+            } else if (GLOBAL.input.y_momentum < 0) {
+                GLOBAL.input.y_momentum += GLOBAL.input.y_momentum_degrade * this.timeDelta;
+                GLOBAL.input.y_momentum = Math.min(GLOBAL.input.y_momentum, 0);
+            }
         }
         this.totalTickCount += 1;
         if(!this.paused) {
-            this.updateGospers();
+            GLOBAL.map.updateMap();
             if (GLOBAL.map.tileSelected) {
                 GLOBAL.gfx.setTileInfo(GLOBAL.map.tileSelected);
             } else if (GLOBAL.map.gosperSelected) {
                 GLOBAL.gfx.setGosperInfo(GLOBAL.map.gosperSelected);
             }
         }
+        GLOBAL.gfx.updateCanvas(1);
         this.endFrameTime = new Date();
         setTimeout(this.runTick.bind(this), this.tickInterval);
     }
     timeAdjust(valueToAdjust) {
         let adjustRate = Math.min(this.maxAdjust, this.timeDelta/1000 * this.gameSpeed);
+        return valueToAdjust * adjustRate;
+    }
+    framerateAdjust(valueToAdjust) {
+        let adjustRate = this.timeDelta/1000;
         return valueToAdjust * adjustRate;
     }
     calculateFps() {

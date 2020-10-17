@@ -11,6 +11,7 @@ class Input {
         this.x_momentum = 0;
         this.y_momentum = 0;
         this.selectType = "tile";
+        this.wasPaused = false;
     }
     init() {
         $("#info-panel").outerHeight(window.innerHeight-4);
@@ -62,6 +63,7 @@ class Input {
         });
         $("#gosper-select-button").click(() => {
             if (GLOBAL.map.selectType !== "gosper") {
+                $("#gosper-more-info-button").addClass("hidden");
                 this.selectType = "gosper";
                 GLOBAL.map.tileSelected = null;
                 GLOBAL.map.gosperSelected = null;
@@ -75,6 +77,64 @@ class Input {
                 GLOBAL.gfx.drawCanvas();
             }
         });
+        $("#gosper-more-info-button").click(() => {
+            if (!GLOBAL.timing.paused) {
+                GLOBAL.timing.paused = true;
+                GLOBAL.gfx.alterInterface(
+                    ["#pause-button"], //disable
+                    ["#play-button"] //enable
+                );
+                this.wasPaused = false;
+            } else {
+                this.wasPaused = true;
+            }
+
+            $(".screen-state").addClass("hidden");
+            $("#gosper-info-screen").removeClass("hidden");
+            $("#gosper-info-screen").css("display", "flex");
+        });
+
+        $("#gosper-info-view-menu-main").click(() => {
+            $(".gosper-info-menu-button").removeClass("gosper-info-menu-button-selected");
+            $("#gosper-info-view-menu-main").addClass("gosper-info-menu-button-selected");
+            $(".gosper-info-view").addClass("hidden");
+            $("#gosper-main-view").removeClass("hidden");
+        });
+        $("#gosper-info-view-menu-lineage").click(() => {
+            $(".gosper-info-menu-button").removeClass("gosper-info-menu-button-selected");
+            $("#gosper-info-view-menu-lineage").addClass("gosper-info-menu-button-selected");
+            $(".gosper-info-view").addClass("hidden");
+            $("#gosper-lineage-view").removeClass("hidden");
+        });
+        $("#gosper-info-view-menu-pathogen").click(() => {
+            $(".gosper-info-menu-button").removeClass("gosper-info-menu-button-selected");
+            $("#gosper-info-view-menu-pathogen").addClass("gosper-info-menu-button-selected");
+            $(".gosper-info-view").addClass("hidden");
+            $("#gosper-pathogen-view").removeClass("hidden");
+        });
+        $("#gosper-info-view-menu-brain").click(() => {
+            $(".gosper-info-menu-button").removeClass("gosper-info-menu-button-selected");
+            $("#gosper-info-view-menu-brain").addClass("gosper-info-menu-button-selected");
+            $(".gosper-info-view").addClass("hidden");
+            $("#gosper-brain-view").removeClass("hidden");
+        });
+
+        $("#gosper-info-view-menu-back").click(() => {
+            $(".screen-state").addClass("hidden");
+            $("#gosper-info-screen").css("display", "none");
+            $("#game-screen").removeClass("hidden");
+            if (!this.wasPaused) {
+                if (GLOBAL.timing.paused) {
+                    GLOBAL.timing.paused = false;
+                    GLOBAL.gfx.alterInterface(
+                        ["#play-button"], //disable
+                        ["#pause-button"] //enable
+                    );
+                }
+                this.wasPaused = false;
+            }
+        });
+
         $("#zoom-in-button").click(() => {
             GLOBAL.gfx.zoomIn();
         });
@@ -156,6 +216,9 @@ class Input {
             this.mouseMoved = true;
         }
         if (this.mouseDown) {
+            GLOBAL.gfx.fullDraw = true;
+            GLOBAL.gfx.zoomCountdown = -1;
+
             this.x_momentum = 0;
             this.y_momentum = 0;
             let x_mouseDelta = e.x - this.x_mouseDownPos;

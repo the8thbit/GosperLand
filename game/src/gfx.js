@@ -8,6 +8,11 @@ class Gfx {
         this.viewZoom = 1; 
         this.viewPosMoveRate = 1.5;
 
+        this.zoomEffect = 0;
+        this.zoomCountdown = 0;
+        this.timeOfZoom = new Date();
+        this.fullDraw = false;
+
         this.tileWidth = Math.floor(32*this.viewZoom/2)*2;
         this.tileHeight = Math.floor(32*this.viewZoom/2)*2;
         this.tileBorderThickness = Math.floor(1*this.viewZoom);
@@ -16,25 +21,27 @@ class Gfx {
         this.redrawInterval = 0;
         this.ticksUntilRedraw = this.redrawInterval;
 
-        this.visibleSigFigs = 5;
+        this.visibleSigFigs = 4;
     }
     init() {
         this.ctx.scale(this.viewZoom, this.viewZoom);
         this.resizeCanvas(window.innerWidth, window.innerHeight);
-        this.x_viewPos = Math.round(this.x_tilePosToPxPos(GLOBAL.map.worldWidth)/2 - this.canvas.width/2);
-        this.y_viewPos = Math.round(this.y_tilePosToPxPos(GLOBAL.map.worldHeight)/2 - this.canvas.height/2);
+        this.x_viewPos = Math.round(this.x_tilePosToPxPos(GLOBAL.map.worldWidth)/2 + this.canvas.width);
+        this.y_viewPos = Math.round(this.y_tilePosToPxPos(GLOBAL.map.worldHeight)/2 + this.canvas.height);
         $("#game-speed").html(GLOBAL.timing.gameSpeed);
         this.updateGameInfoBox();
     }
     zoomIn() {
         if (this.viewZoom < 1) {
+            this.zoomEffect = randIntBetween(0, 6);
+            this.timeOfZoom = new Date();
             this.viewZoom *= 2;
             this.tileWidth = Math.floor(32*this.viewZoom/2)*2;
             this.tileHeight = Math.floor(32*this.viewZoom/2)*2;
             this.tileBorderThickness = Math.floor(1*this.viewZoom);
             this.ctx.scale(this.viewZoom, this.viewZoom);
             this.moveView(0,0);
-            this.drawCanvas();
+            this.zoomCountdown = (this.x_pxPosToTilePos(this.canvas.width)+2)*(this.y_pxPosToTilePos(this.canvas.height)+2);
             if (this.viewZoom >= 1) {
                 this.alterInterface(
                     ["#zoom-in-button"], //disable
@@ -50,6 +57,8 @@ class Gfx {
     }
     zoomOut() {
         if (this.tileWidth/2 >= 2 && this.tileHeight/2 >= 2) {
+            this.zoomEffect = randIntBetween(0, 6);
+            this.timeOfZoom = new Date();
             this.viewZoom /= 2;
             this.ctx.scale(this.viewZoom, this.viewZoom);
             this.tileWidth = Math.floor(32*this.viewZoom/2)*2;
@@ -57,7 +66,7 @@ class Gfx {
             this.tileBorderThickness = Math.floor(1*this.viewZoom);
             this.resizeCanvas(window.innerWidth, window.innerHeight);
             this.moveView(-this.canvas.width, -this.canvas.height);
-            this.drawCanvas();
+            this.zoomCountdown = (this.x_pxPosToTilePos(this.canvas.width)+2)*(this.y_pxPosToTilePos(this.canvas.height)+2);
             if (this.tileWidth/2 < 2 || this.tileHeight/2 < 2) {
                 this.alterInterface(
                     ["#zoom-out-button"], //disable
@@ -102,11 +111,12 @@ class Gfx {
         } else {
             this.y_viewPos = Math.round(-(this.canvas.height-worldHeightPx)/2);
         }
-        this.drawCanvas();
     }
     drawCanvas() {
         this.ctx.setTransform(1,0,0,1,0,0);
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.viewZoom >= 1 || this.fullDraw) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
         this.ctx.translate(-this.x_viewPos, -this.y_viewPos);
         this.drawGrid();
     }
@@ -116,11 +126,22 @@ class Gfx {
         let j_min = Math.max(0, Math.floor(this.y_pxPosToTilePos(this.y_viewPos)));
         let j_max = Math.min(GLOBAL.map.worldHeight-1, j_min + Math.ceil(this.y_pxPosToTilePos(this.canvas.height)) + 1);
 
+        let currentTime = new Date();
+        if (
+            GLOBAL.input.x_momentum !== 0 ||
+            GLOBAL.input.y_momentum !== 0 ||
+            (this.zoomCountdown >= 1 && currentTime.getTime() >= this.timeOfZoom.getTime() + 600)
+        ) {
+            this.fullDraw = true;
+            this.zoomCountdown = -1;
+        }
+
         for (let i=i_min; i <= i_max; i++) {
             for (let j=j_min; j <= j_max; j++) {
                 this.drawTile(i, j);
-            }      
+            }
         }
+        this.fullDraw = false;
     }
     drawTile(x, y) {
         let tile = GLOBAL.map.tileGrid[x][y];
@@ -130,8 +151,40 @@ class Gfx {
         let x_tileBasePos = this.tileBorderThickness+(x*(this.tileWidth+this.tileBorderThickness));
         let y_tileBasePos = this.tileBorderThickness+(y*(this.tileHeight+this.tileBorderThickness));
 
+        let tileRefresh = false;
+        if (this.fullDraw || (gosperIndex && !GLOBAL.map.gosperList[gosperIndex].isAlive && this.viewZoom >= 0.5)) {
+            tileRefresh = true;
+        }
+        if (
+            (GLOBAL.map.tileSelected && (
+                (GLOBAL.map.tileSelected.x === x-1 && GLOBAL.map.tileSelected.y === y-1) ||
+                (GLOBAL.map.tileSelected.x === x-1 && GLOBAL.map.tileSelected.y === y) ||
+                (GLOBAL.map.tileSelected.x === x-1 && GLOBAL.map.tileSelected.y === y+1) ||
+                (GLOBAL.map.tileSelected.x === x && GLOBAL.map.tileSelected.y === y-1) ||
+                (GLOBAL.map.tileSelected.x === x && GLOBAL.map.tileSelected.y === y) ||
+                (GLOBAL.map.tileSelected.x === x && GLOBAL.map.tileSelected.y === y+1) ||
+                (GLOBAL.map.tileSelected.x === x+1 && GLOBAL.map.tileSelected.y === y-1) ||
+                (GLOBAL.map.tileSelected.x === x+1 && GLOBAL.map.tileSelected.y === y) ||
+                (GLOBAL.map.tileSelected.x === x+1 && GLOBAL.map.tileSelected.y === y+1)
+            )) ||
+            (GLOBAL.map.gosperSelected && (
+                (GLOBAL.map.gosperSelected.x === x-1 && GLOBAL.map.gosperSelected.y === y-1) ||
+                (GLOBAL.map.gosperSelected.x === x-1 && GLOBAL.map.gosperSelected.y === y) ||
+                (GLOBAL.map.gosperSelected.x === x-1 && GLOBAL.map.gosperSelected.y === y+1) ||
+                (GLOBAL.map.gosperSelected.x === x && GLOBAL.map.gosperSelected.y === y-1) ||
+                (GLOBAL.map.gosperSelected.x === x && GLOBAL.map.gosperSelected.y === y) ||
+                (GLOBAL.map.gosperSelected.x === x && GLOBAL.map.gosperSelected.y === y+1) ||
+                (GLOBAL.map.gosperSelected.x === x+1 && GLOBAL.map.gosperSelected.y === y-1) ||
+                (GLOBAL.map.gosperSelected.x === x+1 && GLOBAL.map.gosperSelected.y === y) ||
+                (GLOBAL.map.gosperSelected.x === x+1 && GLOBAL.map.gosperSelected.y === y+1)
+            ))
+        ) {
+            tileRefresh = true;
+        }
+
         if (GLOBAL.map.tileSelected) {
             if (GLOBAL.map.tileSelected.x === x && GLOBAL.map.tileSelected.y === y) {
+
                 isSelected = true;
                 this.ctx.fillStyle = "yellow";
                 this.ctx.fillRect(
@@ -143,6 +196,7 @@ class Gfx {
             }
         } else if (GLOBAL.map.gosperSelected) {
             if (GLOBAL.map.gosperSelected.x === x && GLOBAL.map.gosperSelected.y === y) {
+                tileRefresh = true;
                 isSelected = true;
                 this.ctx.fillStyle = "cyan";
                 this.ctx.fillRect(
@@ -152,51 +206,114 @@ class Gfx {
                     this.tileHeight+2
                 );
             }
+        } 
+
+        if (!tileRefresh && this.zoomCountdown > 0 && this.timeOfZoom !== GLOBAL.map.tileGrid[x][y].zoomUpdateRef) {
+            switch(this.zoomEffect) {
+                case 0:
+                    tileRefresh = Math.random() < 1.0/8.0;
+                    break;
+                case 1:
+                    tileRefresh = ((Math.floor(((this.canvas.height/y)*(this.canvas.width/x)))+GLOBAL.timing.totalTickCount) % 32) === 0;
+                    if (x===0 || y===0 || x===GLOBAL.map.worldWidth-1 || y===GLOBAL.map.worldHeight-1) {
+                        tileRefresh = true;
+                    }
+                    break;
+                case 2:
+                    tileRefresh = (x*y+(GLOBAL.timing.totalTickCount/2)) % 32 === 0;
+                    if (x===0 || y===0 || x===GLOBAL.map.worldWidth-1 || y===GLOBAL.map.worldHeight-1) {
+                        tileRefresh = true;
+                    }
+                    break;
+                case 3:
+                    tileRefresh = (x*y+(GLOBAL.timing.totalTickCount/4)) % 8 === 0;
+                    if (x===0 || y===0 || x===GLOBAL.map.worldWidth-1 || y===GLOBAL.map.worldHeight-1) {
+                        tileRefresh = true;
+                    }
+                    break;
+                case 4:
+                    tileRefresh = (x+y+(GLOBAL.timing.totalTickCount/4)) % 8 === 0;
+                    break;
+                case 5:
+                    tileRefresh = (y+(GLOBAL.timing.totalTickCount/4)) % 8 === 0;
+                    break;
+                case 6:
+                    tileRefresh = (x+(GLOBAL.timing.totalTickCount/4)) % 8 === 0;
+                    break;
+            }
+            if (tileRefresh) {
+                this.zoomCountdown -= 1;
+                GLOBAL.map.tileGrid[x][y].zoomUpdateRef = this.timeOfZoom;
+            }
+        } else if(tile.changed) {
+            tileRefresh = true;
+        } else if (false /* commented out conditional for motion blur effect/optimization */) {
+            //tileRefresh = Math.random() < 1.0/((1.0 + GLOBAL.timing.framerateAdjust(25)*this.viewZoom));
         }
-        
-        this.ctx.fillStyle = color;
-        this.ctx.fillRect(
-            x_tileBasePos+isSelected,
-            y_tileBasePos+isSelected,
-            this.tileWidth-(isSelected*2),
-            this.tileHeight-(isSelected*2)
-        );
 
-        if (gosperIndex !== null) {
+        if (this.viewZoom >= 1 || tileRefresh) {
+            GLOBAL.map.tileGrid[x][y].changed = false;
+            this.ctx.fillStyle = color;
+            this.ctx.fillRect(
+                x_tileBasePos+isSelected,
+                y_tileBasePos+isSelected,
+                this.tileWidth-(isSelected*2),
+                this.tileHeight-(isSelected*2)
+            );
+        }
+
+        if (gosperIndex !== null && (this.viewZoom >= 1 || tileRefresh || !GLOBAL.map.gosperList[gosperIndex].isAlive || GLOBAL.map.gosperList[gosperIndex].changed)) {
             let gosper = GLOBAL.map.gosperList[gosperIndex];
+            GLOBAL.map.gosperList[gosperIndex].changed = false;
             if (this.viewZoom >= 0.5) {
-                let borderRed = 255;
-                let borderBlue = 255;
-                let borderGreen = 255;
-                if (gosper.age <= gosper.minReproductiveAge) {
-                    borderRed = 255/gosper.minReproductiveAge*gosper.age;
-                    borderBlue = 255/gosper.minReproductiveAge*gosper.age;
-                } else if (gosper.age >= gosper.maxReproductiveAge) {
-                    borderRed = 255*(gosper.maxAge-gosper.age)/(gosper.maxAge-gosper.maxReproductiveAge);
-                    borderGreen = 255*(gosper.maxAge-gosper.age)/(gosper.maxAge-gosper.maxReproductiveAge);
+                if (gosper.isAlive) {
+                    let borderRed = 255;
+                    let borderBlue = 255;
+                    let borderGreen = 255;
+                    if (gosper.age <= gosper.getMinBudAge()) {
+                        borderRed = 255/gosper.getMinBudAge()*gosper.age;
+                        borderBlue = 255/gosper.getMinBudAge()*gosper.age;
+                    } else if (gosper.age >= gosper.getMaxBudAge()) {
+                        borderRed = 255*(gosper.getPBS(PBS_MAX_AGE)-gosper.age)/(gosper.getPBS(PBS_MAX_AGE)-gosper.getMaxBudAge());
+                        borderGreen = 255*(gosper.getPBS(PBS_MAX_AGE)-gosper.age)/(gosper.getPBS(PBS_MAX_AGE)-gosper.getMaxBudAge());
+                    }
+
+                    if (gosper.energy <= gosper.getPBS(PBS_MAX_ENERGY) * 0.2) {
+                        borderRed = Math.max(0, borderRed - 255*(1-(gosper.energy/(gosper.getPBS(PBS_MAX_ENERGY)*0.2))));
+                        borderGreen = Math.max(0, borderGreen - 255*(1-(gosper.energy/(gosper.getPBS(PBS_MAX_ENERGY)*0.2))));
+                        borderBlue = Math.max(0, borderBlue - 255*(1-(gosper.energy/(gosper.getPBS(PBS_MAX_ENERGY)*0.2))));
+                    }
+
+                    borderRed += (255-borderRed)*gosper.attackedCountdown;
+                    borderGreen -= borderGreen*gosper.attackedCountdown;
+                    borderBlue -= borderBlue*gosper.attackedCountdown;
+
+                    this.ctx.strokeStyle = this.rgbToHex(borderRed, borderGreen, borderBlue);
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(
+                        x_tileBasePos+Math.floor(this.viewZoom*4)+1,
+                        y_tileBasePos+Math.floor(this.viewZoom*4)+1,
+                        this.tileWidth-Math.floor(this.viewZoom*8)-2,
+                        this.tileHeight-Math.floor(this.viewZoom*8)-2
+                    );
+                    this.ctx.fillStyle = this.rgbToHex(gosper.color[0], gosper.color[1], gosper.color[2]);
+                    this.ctx.fillRect(
+                        x_tileBasePos+Math.floor(this.viewZoom*6),
+                        y_tileBasePos+Math.floor(this.viewZoom*6),
+                        this.tileWidth-Math.floor(this.viewZoom*12),
+                        this.tileHeight-Math.floor(this.viewZoom*12)
+                    );
+                } else {
+                    this.ctx.fillStyle = "rgba("+gosper.color[0]+", "+gosper.color[1]+", "+gosper.color[2]+", "+gosper.energy/(gosper.getPBS(PBS_MAX_ENERGY)/2)+")";
+                    this.ctx.fillRect(
+                        x_tileBasePos+Math.floor(this.viewZoom*6)+1,
+                        y_tileBasePos+Math.floor(this.viewZoom*6)+1,
+                        this.tileWidth-Math.floor(this.viewZoom*12)-1,
+                        this.tileHeight-Math.floor(this.viewZoom*12)-1
+                    );
                 }
 
-                if (gosper.energy <= gosper.maxEnergy * 0.2) {
-                    borderRed = Math.max(0, borderRed - 255*(1-(gosper.energy/(gosper.maxEnergy*0.2))));
-                    borderBlue = Math.max(0, borderBlue - 255*(1-(gosper.energy/(gosper.maxEnergy*0.2))));
-                    borderGreen = Math.max(0, borderGreen - 255*(1-(gosper.energy/(gosper.maxEnergy*0.2))));
-                }
-
-                this.ctx.fillStyle = this.rgbToHex(borderRed, borderGreen, borderBlue);
-                this.ctx.fillRect(
-                    x_tileBasePos+Math.floor(this.viewZoom*4),
-                    y_tileBasePos+Math.floor(this.viewZoom*4),
-                    this.tileWidth-Math.floor(this.viewZoom*8),
-                    this.tileHeight-Math.floor(this.viewZoom*8)
-                );
-                this.ctx.fillStyle = this.rgbToHex(gosper.color[0], gosper.color[1], gosper.color[2]);
-                this.ctx.fillRect(
-                    x_tileBasePos+Math.floor(this.viewZoom*6),
-                    y_tileBasePos+Math.floor(this.viewZoom*6),
-                    this.tileWidth-Math.floor(this.viewZoom*12),
-                    this.tileHeight-Math.floor(this.viewZoom*12)
-                );
-                if (gosper.action === "move") {
+                if (gosper.action === ACTION_MOVE) {
                     this.ctx.fillStyle = "white";
                     this.ctx.fillRect(
                         x_tileBasePos+Math.floor(this.viewZoom*14),
@@ -204,7 +321,7 @@ class Gfx {
                         this.tileWidth-Math.floor(this.viewZoom*28),
                         this.tileHeight-Math.floor(this.viewZoom*28)
                     );
-                } else if (gosper.action === "bud") {
+                } else if (gosper.action === ACTION_BUD) {
                     this.ctx.fillStyle = "black";
                     this.ctx.fillRect(
                         x_tileBasePos+Math.floor(this.viewZoom*14),
@@ -212,8 +329,24 @@ class Gfx {
                         this.tileWidth-Math.floor(this.viewZoom*28),
                         this.tileHeight-Math.floor(this.viewZoom*28)
                     );
+                } else if (gosper.action === ACTION_EAT) {
+                    this.ctx.fillStyle = "limegreen";
+                    this.ctx.fillRect(
+                        x_tileBasePos+Math.floor(this.viewZoom*14),
+                        y_tileBasePos+Math.floor(this.viewZoom*14),
+                        this.tileWidth-Math.floor(this.viewZoom*28),
+                        this.tileHeight-Math.floor(this.viewZoom*28)
+                    );
+                } else if (gosper.action === ACTION_ATTACK) {
+                    this.ctx.fillStyle = "red";
+                    this.ctx.fillRect(
+                        x_tileBasePos+Math.floor(this.viewZoom*14),
+                        y_tileBasePos+Math.floor(this.viewZoom*14),
+                        this.tileWidth-Math.floor(this.viewZoom*28),
+                        this.tileHeight-Math.floor(this.viewZoom*28)
+                    );
                 }
-            } else {
+            } else if (gosper.isAlive) {
                 this.ctx.fillStyle = "white";
                 this.ctx.fillRect(
                     x_tileBasePos,
@@ -252,6 +385,7 @@ class Gfx {
         } else {
             this.setGosperInfo(gosper);
         }
+        this.fullDraw = true;
     }
     setTileInfo(tile) {
         let gosper = GLOBAL.map.gosperList[tile.gosperIndex];
@@ -268,7 +402,6 @@ class Gfx {
         }
         $("#tilex").html(tile.x);
         $("#tiley").html(tile.y);
-        this.drawCanvas();
     }
 
     setGosperInfo(gosper) {
@@ -276,22 +409,86 @@ class Gfx {
             GLOBAL.map.gosperSelected = gosper;
             GLOBAL.map.tileSelected = null;
 
-            $("#gosper-name").html(gosper.name);
-            $("#gosper-action").html(gosper.action);
-            $("#gosper-action-progress").html(gosper.actionProgress.toFixed(this.visibleSigFigs));
-            $("#gosper-alive").html(gosper.isAlive);
-            $("#gosper-photosynth").html(gosper.photoSynth.toFixed(this.visibleSigFigs));
-            $("#gosper-energy").html(gosper.energy.toFixed(this.visibleSigFigs));
-            $("#gosper-max-energy").html(gosper.maxEnergy.toFixed(this.visibleSigFigs));
-            $("#gosper-age").html(gosper.age.toFixed(this.visibleSigFigs));
-            $("#gosper-max-age").html(gosper.maxAge.toFixed(this.visibleSigFigs));
-            $("#gosper-move-freq").html(gosper.moveFreq.toFixed(this.visibleSigFigs));
-            $("#gosper-bud-freq").html(gosper.budFreq.toFixed(this.visibleSigFigs));
-            $("#gosper-min-bud-age").html(gosper.minBudAge.toFixed(this.visibleSigFigs));
-            $("#gosper-max-bud-age").html(gosper.maxBudAge.toFixed(this.visibleSigFigs));
-            $("#gosper-move-speed").html(gosper.moveSpeed.toFixed(this.visibleSigFigs));
-            $("#gosper-bud-speed").html(gosper.budSpeed.toFixed(this.visibleSigFigs));
-            this.drawCanvas();
+            let currentActionType = ``;
+
+            switch (gosper.action) {
+                case 0:
+                    currentActionType = `wait`;
+                    break;
+                case 1:
+                    currentActionType = `move`;
+                    break;
+                case 2:
+                    currentActionType = `eat`;
+                    break;
+                case 3:
+                    currentActionType = `reproduce`;
+                    break;
+                case 4:
+                    currentActionType = `attack`
+                    break;
+                default:
+                    currentActionType = ``;
+                    break;
+            }
+
+            $("#gosper-more-info-button").removeClass("hidden");
+            $(".gosper-name").html(gosper.name);
+            $(".gosper-lineage-length").html(gosper.lineageLength);
+            $(".gosper-action").html(currentActionType);
+            $(".gosper-action-progress").html(gosper.actionProgress.toFixed(this.visibleSigFigs));
+            if (gosper.isAlive) {
+                $(".gosper-alive").html("alive");
+            } else if (!gosper.isAlive && gosper.exists) {
+                $(".gosper-alive").html("dead");
+            } else {
+                $(".gosper-alive").html("decomposed");
+            }
+            $(".gosper-hex-color").html(this.rgbToHex(gosper.color[0], gosper.color[1], gosper.color[2]));
+            $(".gosper-red-level").html((gosper.color[0]/255 * 100).toFixed(this.visibleSigFigs-3) + "%");
+            $(".gosper-green-level").html((gosper.color[1]/255 * 100).toFixed(this.visibleSigFigs-3) + "%");
+            $(".gosper-blue-level").html((gosper.color[2]/255 * 100).toFixed(this.visibleSigFigs-3) + "%");
+            $(".gosper-photosynth").html(gosper.getPBS(PBS_PHOTOSYNTH).toFixed(this.visibleSigFigs));
+            $(".gosper-stomach-size").html(gosper.getPBS(PBS_STOMACH_SIZE).toFixed(this.visibleSigFigs));
+            $(".gosper-food-in-stomach").html(gosper.foodInStomach.toFixed(this.visibleSigFigs));
+            $(".gosper-energy").html(gosper.energy.toFixed(this.visibleSigFigs));
+            $(".gosper-max-energy").html(gosper.getPBS(PBS_MAX_ENERGY).toFixed(this.visibleSigFigs));
+            $(".gosper-age").html(gosper.age.toFixed(this.visibleSigFigs));
+            $(".gosper-max-age").html(gosper.getPBS(PBS_MAX_AGE).toFixed(this.visibleSigFigs));
+            $(".gosper-min-bud-age").html(gosper.getMinBudAge().toFixed(this.visibleSigFigs));
+            $(".gosper-max-bud-age").html(gosper.getMaxBudAge().toFixed(this.visibleSigFigs));
+            $(".gosper-move-speed").html(gosper.getPBS(PBS_MOVE_SPEED).toFixed(this.visibleSigFigs));
+            $(".gosper-bud-speed").html(gosper.getPBS(PBS_BUD_SPEED).toFixed(this.visibleSigFigs));
+            $(".gosper-eat-speed").html(gosper.getPBS(PBS_BUD_SPEED).toFixed(this.visibleSigFigs));
+            $(".gosper-brain-complexity").html(gosper.brain.complexity.toFixed(this.visibleSigFigs));
+            $(".gosper-brain-layer-count").html(gosper.brain.nodeCounts.length);
+            $(".gosper-brain-node-count").html(gosper.brain.nodeCounts.reduce((a, b) => a + b, 0));
+            $(".gosper-parent").html(gosper.parentID);
+            $(".gosper-grandparent").html(gosper.grandparentID);
+            $(".gosper-children").html(gosper.childrenIDs.length);
+            if (gosper.pathogens && gosper.pathogens.length > 0) {
+                //$(".gosper-pathogen").html(gosper.pathogens.join(", "));
+            }
+            $(".gosper-brain").html(
+                    "<div class='brain-text'>" + (
+                        JSON.stringify(gosper.brain, undefined, 4)
+                        .replace(/,[\r\n][ ]*/g, ", ")
+                        .replace(/    /g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+                        .replace(/[\r\n]/g, "</div><div class='brain-text'>")
+                    ) + "</div>"
+            );
+            $(".brain-text").click(function() {
+                console.log("blah0");
+                if ($(this).css("text-overflow") === "ellipsis") {
+                    console.log("blah1");
+                    $(this).css("text-overflow", "unset");
+                    $(this).css("white-space", "normal");
+                } else {
+                    console.log("blah2");
+                    $(this).css("text-overflow", "ellipsis");
+                    $(this).css("white-space", "nowrap");
+                }
+            });
         }
     }
     alterInterface(selectArray=[], enableArray=[], hideArray=[], unhideArray=[], clearArray=[]) {
